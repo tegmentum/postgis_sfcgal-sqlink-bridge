@@ -4,10 +4,13 @@ package sqlite-bridge:postgis-sfcgal@0.1.0;
 ///
 /// The bridge imports `compose:dynlink/linker` for outbound
 /// dispatch to a resident provider and exports the declarative
-/// `sqlite:extension@1.0.0` metadata + scalar-function pair.
-/// The host reads `metadata.describe()` at load, installs
-/// sqlite3 trampolines against every advertised scalar, and
-/// routes per-row calls back through `scalar-function.call`.
+/// `sqlite:extension@1.0.0` metadata + scalar-function pair
+/// (plus `aggregate-function` when the catalog surfaces any
+/// aggregate / window functions, and `vtab` when it surfaces any
+/// table-functions). The host reads `metadata.describe()` at
+/// load, installs sqlite3 trampolines against every advertised
+/// scalar / aggregate / vtab, and routes per-row calls back
+/// through the matching dispatch export.
 world bridge {
     import compose:dynlink/linker@0.1.0;
 
@@ -17,4 +20,5 @@ world bridge {
 
     export sqlite:extension/metadata@1.0.0;
     export sqlite:extension/scalar-function@1.0.0;
+    export sqlite:extension/vtab@1.0.0;
 }
